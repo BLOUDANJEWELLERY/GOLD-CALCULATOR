@@ -168,9 +168,10 @@
     }
 
     .toggle-container {
-      display: flex
-      justify-content: center;
+      display: flex;
+      justify-content: space-between;
       gap: 10px;
+      align-items: center;
       margin-top: 20px;
     }
 
@@ -376,37 +377,44 @@
       document.body.classList.remove('no-animations');
     }
 
-    async function takeScreenshotTable() {
-      const table = document.getElementById('data-table');
-      document.body.classList.add('no-animations');
+async function takeScreenshotTable() {
+  const table = document.getElementById('data-table');
+  document.body.classList.add('no-animations');
 
-      const isDark = document.body.classList.contains('dark-mode');
-      const screenshotBg = isDark ? '#000000' : '#fff8e1';
+  // Determine background color based on mode
+  const isDark = document.body.classList.contains('dark-mode');
+  const screenshotBg = isDark ? '#000000' : '#fff8e1';
 
-      const originalTableBg = table.style.backgroundColor;
-      table.style.backgroundColor = screenshotBg;
+  // Temporarily apply background to table and parent
+  const originalTableBg = table.style.backgroundColor;
+  table.style.backgroundColor = screenshotBg;
 
-      const canvas = await html2canvas(table, {
-        backgroundColor: screenshotBg,
-        scale: 2
-      });
+  const canvas = await html2canvas(table, {
+    backgroundColor: screenshotBg,
+    scale: 2
+  });
 
-      table.style.backgroundColor = originalTableBg;
+  // Reset table background
+  table.style.backgroundColor = originalTableBg;
 
-      canvas.toBlob(blob => {
-        const file = new File([blob], "gold_calculator_table_screenshot.png", { type: "image/png" });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: "Screenshot" });
-        } else {
-          const link = document.createElement('a');
-          link.download = 'gold_calculator_table_screenshot.png';
-          link.href = URL.createObjectURL(blob);
-          link.click();
-        }
-      }, 'image/png');
-
-      document.body.classList.remove('no-animations');
+  canvas.toBlob(blob => {
+    const file = new File([blob], "gold_calculator_table_screenshot.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: "Screenshot" });
+    } else {
+      const link = document.createElement('a');
+      link.download = 'gold_calculator_table_screenshot.png';
+      link.href = URL.createObjectURL(blob);
+      link.click();
     }
+  }, 'image/png');
+
+  document.body.classList.remove('no-animations');
+}
+
+
+
+    
 
     function moveFocus(e, nextId) {
       if (e.key === "Enter") {
