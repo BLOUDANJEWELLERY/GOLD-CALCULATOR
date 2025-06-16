@@ -1,1 +1,0 @@
-# Gold-Calculator2
