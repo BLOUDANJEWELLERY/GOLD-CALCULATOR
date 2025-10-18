@@ -663,6 +663,7 @@
               <label>Available Purity:</label>
               <input type="number" id="available-purity" class="input-field" 
                      oninput="calculateWeightNeeded()" 
+                    inputmode="decimal"
                      onkeydown="moveFocus(event, 'weight-1')"
                      placeholder="Enter available purity" />
             </div>
@@ -673,7 +674,7 @@
           <div class="input-card-inner">
             <div class="input-group">
               <label>Weight Needed:</label>
-              <input type="number" id="weight-needed" class="input-field result" readonly />
+              <input type="number" inputmode="decimal" id="weight-needed" class="input-field result" readonly />
             </div>
           </div>
         </div>
@@ -682,7 +683,7 @@
           <div class="input-card-inner">
             <div class="input-group">
               <label>Copper Needed:</label>
-              <input type="number" id="copper-needed" class="input-field result" readonly />
+              <input type="number" inputmode="decimal" id="copper-needed" class="input-field result" readonly />
             </div>
           </div>
         </div>
@@ -704,9 +705,9 @@
             </tbody>
             <tfoot>
               <tr>
-                <td><input type="number" id="total-weight" class="table-input result" readonly /></td>
-                <td><input type="number" id="avg-purity" class="table-input result" readonly /></td>
-                <td><input type="number" id="total-net" class="table-input result" readonly /></td>
+                <td><input type="number" inputmode="decimal" id="total-weight" class="table-input result" readonly /></td>
+                <td><input type="number" inputmode="decimal" id="avg-purity" class="table-input result" readonly /></td>
+                <td><input type="number" inputmode="decimal" id="total-net" class="table-input result" readonly /></td>
               </tr>
             </tfoot>
           </table>
@@ -828,19 +829,19 @@
       row.classList.add('slide-right');
       row.innerHTML = `
         <td>
-          <input type="number" class="table-input weight" id="weight-${rowCount + 1}" 
+          <input type="number" inputmode="decimal" class="table-input weight" id="weight-${rowCount + 1}" 
                  step="0.01" oninput="calculateNetWeight()" 
                  onkeydown="moveFocus(event, 'purity-${rowCount + 1}')"
                  placeholder="0.00" />
         </td>
         <td>
-          <input type="number" class="table-input purity" id="purity-${rowCount + 1}" 
+          <input type="number" inputmode="decimal" class="table-input purity" id="purity-${rowCount + 1}" 
                  step="0.1" oninput="calculateNetWeight()" 
                  onkeydown="moveFocus(event, 'weight-${rowCount + 2}')"
                  placeholder="0.0" />
         </td>
         <td>
-          <input type="number" class="table-input result net" readonly />
+          <input type="number" inputmode="decimal" class="table-input result net" readonly />
         </td>
       `;
       tableBody.appendChild(row);
