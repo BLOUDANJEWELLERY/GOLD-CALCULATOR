@@ -1,353 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GOLD CALCULATOR</title>
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold Calculator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    /* Base Styles */
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0 1rem;
-      max-width: 720px;
-      margin-inline: auto;
-      background: linear-gradient(to bottom right, #e0e7ff, #f8fafc);
-      color: #1d4ed8;
-      transition: background 0.3s, color 0.3s;
-    }
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 600;
-      font-size: 2.5rem;
-      text-align: center;
-      color: #1d4ed8;
-      margin: 1.5rem 0;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0 1rem;
+    max-width: 720px;
+    margin-inline: auto;
+    background: linear-gradient(to bottom right, #fef7ed, #fefae0);
+    color: #1d4ed8;
+  }
 
-    /* Inputs */
-    .input-section {
-      display: grid;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .input-section label {
-      display: flex;
-      flex-direction: column;
-      font-weight: 500;
-    }
-    .input-section input {
-      padding: 0.6rem 0.8rem;
-      border-radius: 0.75rem;
-      border: 2px solid #c7a332;
-      font-size: 1rem;
-      transition: border-color 0.3s, background 0.3s;
-    }
-    .input-section input:focus {
-      outline: none;
-      border-color: #1d4ed8;
-      background-color: #fef7ed;
-    }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    text-align: center;
+    color: #1d4ed8;
+    margin: 1.5rem 0;
+  }
 
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      border-radius: 1rem;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-      transition: all 0.3s;
-    }
-    th, td {
-      padding: 0.75rem;
-      text-align: center;
-      font-size: 0.95rem;
-    }
-    thead {
-      background: linear-gradient(to right, #1d4ed8, #1e40af);
-      color: #c7a332;
-    }
-    tbody tr:nth-child(even) {
-      background-color: #fef7ed;
-    }
-    tbody input {
-      width: 100%;
-      padding: 0.4rem 0.6rem;
-      border-radius: 0.5rem;
-      border: 1px solid #c7a332;
-      text-align: center;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-    tfoot input {
-      font-weight: bold;
-      background-color: #fef7ed;
-      border: 2px solid #c7a332;
-    }
+  .input-section {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
 
-    /* Buttons */
-    .action-buttons, .toggle-container {
-      display: flex;
-      justify-content: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-    button {
-      background: linear-gradient(to bottom right, #1d4ed8, #2563eb);
-      color: #c7a332;
-      border: none;
-      padding: 0.75rem 1.25rem;
-      font-size: 1rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(to bottom right, #2563eb, #1e40af);
-    }
-    button i {
-      margin-left: 0.5rem;
-    }
+  .input-section label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    color: #334155;
+  }
 
-    /* Animations */
-    .slide-right {
-      animation: slideInRight 0.4s forwards;
-    }
-    .slide-left {
-      animation: slideOutLeft 0.4s forwards;
-    }
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOutLeft {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(-100%); opacity: 0; }
-    }
+  .input-section input {
+    padding: 0.6rem 0.8rem;
+    border-radius: 0.75rem;
+    border: 2px solid #c7a332;
+    font-size: 1rem;
+    transition: border-color 0.3s, background 0.3s;
+  }
 
-    .fade {
-      animation: fadeIn 0.5s forwards;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .input-section input:focus {
+    outline: none;
+    border-color: #1d4ed8;
+    background-color: #fef7ed;
+  }
 
-    .no-animations * {
-      animation: none !important;
-      transition: none !important;
-    }
+  table {
+    width: 100%;
+    max-width: 100%; /* shrink to fit mobile */
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
 
-    /* Dark Mode */
-    body.dark-mode {
-      background: linear-gradient(to bottom right, #1e293b, #0f172a);
-      color: #c7a332;
-    }
-    body.dark-mode h2 {
-      color: #1d4ed8;
-    }
-    body.dark-mode table thead {
-      background: linear-gradient(to right, #1d4ed8, #2563eb);
-      color: #c7a332;
-    }
-    body.dark-mode tbody tr:nth-child(even) {
-      background-color: #1e293b;
-    }
-    body.dark-mode input {
-      background-color: #1e293b;
-      color: #c7a332;
-      border: 1px solid #c7a332;
-    }
-    body.dark-mode button {
-      color: #c7a332;
-    }
+  th, td {
+    padding: 0.6rem;
+    text-align: center;
+  }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      font-weight: 500;
-      background: linear-gradient(to right, #1d4ed8, #2563eb);
-      color: #c7a332;
-      border-radius: 0.75rem;
-    }
+  thead {
+    background: linear-gradient(to right, #c7a332, #fbbf24);
+    color: #1d4ed8;
+  }
 
-    /* Responsive */
-    @media (max-width: 640px) {
-      h2 { font-size: 2rem; }
-      .input-section { gap: 0.75rem; }
-      button { font-size: 0.9rem; padding: 0.65rem 1rem; }
-      th, td { font-size: 0.85rem; padding: 0.6rem; }
-    }
-  </style>
+  tbody tr:nth-child(even) {
+    background-color: #fff8e1;
+  }
+
+  tbody input {
+    width: 90%;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid #c7a332;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  tfoot input {
+    font-weight: bold;
+    background-color: #fff8e1;
+    border: 2px solid #c7a332;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  button {
+    background: linear-gradient(to bottom right, #1d4ed8, #2563eb);
+    color: #c7a332;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to bottom right, #2563eb, #1e40af);
+  }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-weight: 500;
+    background: linear-gradient(to right, #1d4ed8, #c7a332);
+    color: white;
+    border-radius: 0.75rem;
+  }
+
+  @media (max-width: 640px) {
+    h2 { font-size: 2rem; }
+    .input-section { gap: 0.75rem; }
+    button { font-size: 0.9rem; padding: 0.65rem 1rem; }
+    th, td { font-size: 0.8rem; padding: 0.5rem; }
+  }
+</style>
 </head>
 <body>
-  <h2>GOLD CALCULATOR</h2>
+<h2>Gold Calculator</h2>
 
-  <div class="toggle-container">
-    <button onclick="clearAll()">AC</button>
-    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
-      <i class="fas fa-moon"></i>
-    </button>
-  </div>
+<div class="input-section">
+  <label>Target Purity
+    <input type="number" id="target-purity" oninput="calculateWeightNeeded()" />
+  </label>
+  <label>Available Purity
+    <input type="number" id="available-purity" oninput="calculateWeightNeeded()" />
+  </label>
+  <label>Weight Needed
+    <input type="number" id="weight-needed" readonly />
+  </label>
+  <label>Copper Needed
+    <input type="number" id="copper-needed" readonly />
+  </label>
+</div>
 
-  <div class="input-section">
-    <label>Target Purity
-      <input type="number" id="target-purity" oninput="calculateWeightNeeded()" onkeydown="moveFocus(event, 'available-purity')" />
-    </label>
-    <label>Available Purity
-      <input type="number" id="available-purity" oninput="calculateWeightNeeded()" onkeydown="moveFocus(event, 'weight-1')" />
-    </label>
-    <label>Weight Needed
-      <input type="number" id="weight-needed" class="result" readonly />
-    </label>
-    <label>Copper Needed
-      <input type="number" id="copper-needed" class="result" readonly />
-    </label>
-  </div>
+<table>
+  <thead>
+    <tr>
+      <th>Weight</th>
+      <th>Purity</th>
+      <th>Net Weight</th>
+    </tr>
+  </thead>
+  <tbody id="data-rows"></tbody>
+  <tfoot>
+    <tr>
+      <td><input type="number" id="total-weight" readonly /></td>
+      <td><input type="number" id="avg-purity" readonly /></td>
+      <td><input type="number" id="total-net" readonly /></td>
+    </tr>
+  </tfoot>
+</table>
 
-  <table id="data-table">
-    <thead>
-      <tr>
-        <th>Weight</th>
-        <th>Purity</th>
-        <th>Net Weight</th>
-      </tr>
-    </thead>
-    <tbody id="data-rows"></tbody>
-    <tfoot>
-      <tr>
-        <td><input type="number" id="total-weight" class="result" readonly /></td>
-        <td><input type="number" id="avg-purity" class="result" readonly /></td>
-        <td><input type="number" id="total-net" class="result" readonly /></td>
-      </tr>
-    </tfoot>
-  </table>
+<div class="action-buttons">
+  <button onclick="addRow()">+</button>
+  <button onclick="removeRow()">-</button>
+</div>
 
-  <div class="action-buttons">
-    <button onclick="addRow()">+</button>
-    <button onclick="removeRow()">-</button>
-    <button onclick="takeScreenshotPage()" title="Save Full Page Screenshot">
-      <i class="fas fa-file-alt"></i>
-    </button>
-    <button onclick="takeScreenshotTable()" title="Save Table Screenshot">
-      <i class="fas fa-table"></i>
-    </button>
-  </div>
+<footer>
+  Powered by: <strong>Bloudan Jewellery</strong>
+</footer>
 
-  <footer>
-    Powered by: <strong>BLOUDAN JEWELLERY</strong>
-  </footer>
+<script>
+  function addRow() {
+    const tableBody = document.getElementById("data-rows");
+    const rowCount = tableBody.rows.length;
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td><input type="number" class="weight" step="0.01" oninput="calculateNetWeight()" /></td>
+      <td><input type="number" class="purity" step="0.1" oninput="calculateNetWeight()" /></td>
+      <td><input type="number" class="net" readonly /></td>
+    `;
+    tableBody.appendChild(row);
+  }
 
-  <script>
-    let isDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (isDarkMode) document.body.classList.add('dark-mode');
+  function removeRow() {
+    const tableBody = document.getElementById("data-rows");
+    if (tableBody.rows.length > 0) tableBody.rows[tableBody.rows.length-1].remove();
+    calculateNetWeight();
+  }
 
-    function toggleDarkMode() {
-      isDarkMode = !isDarkMode;
-      document.body.classList.toggle('dark-mode', isDarkMode);
-      localStorage.setItem('darkMode', isDarkMode);
+  function calculateNetWeight() {
+    const weights = document.querySelectorAll('.weight');
+    const purities = document.querySelectorAll('.purity');
+    const nets = document.querySelectorAll('.net');
+
+    let totalWeight = 0, totalNet = 0;
+
+    for (let i = 0; i < weights.length; i++) {
+      const w = parseFloat(weights[i].value) || 0;
+      const p = parseFloat(purities[i].value) || 0;
+      const net = w * p / 999;
+      nets[i].value = net.toFixed(2);
+      totalWeight += w;
+      totalNet += net;
     }
 
-    function addRow() {
-      const tableBody = document.getElementById("data-rows");
-      const rowCount = tableBody.rows.length;
-      const row = document.createElement("tr");
-      row.classList.add('slide-right');
-      row.innerHTML = `
-        <td><input type="number" class="weight" id="weight-${rowCount + 1}" step="0.01" oninput="calculateNetWeight()" onkeydown="moveFocus(event, 'purity-${rowCount + 1}')"/></td>
-        <td><input type="number" class="purity" id="purity-${rowCount + 1}" step="0.1" oninput="calculateNetWeight()" onkeydown="moveFocus(event, 'weight-${rowCount + 2}')"/></td>
-        <td><input type="number" class="net result" readonly /></td>
-      `;
-      tableBody.appendChild(row);
+    document.getElementById('total-weight').value = totalWeight.toFixed(2);
+    document.getElementById('total-net').value = totalNet.toFixed(2);
+    if (totalWeight > 0) {
+      const avgPurity = (totalNet / totalWeight) * 999;
+      document.getElementById('avg-purity').value = avgPurity.toFixed(1);
+    } else {
+      document.getElementById('avg-purity').value = '';
     }
+    calculateWeightNeeded();
+  }
 
-    function removeRow() {
-      const tableBody = document.getElementById("data-rows");
-      if (tableBody.rows.length > 0) {
-        const row = tableBody.rows[tableBody.rows.length - 1];
-        row.classList.add('slide-left');
-        row.addEventListener('animationend', () => {
-          row.remove();
-          calculateNetWeight();
-          calculateWeightNeeded();
-        });
-      }
-    }
+  function calculateWeightNeeded() {
+    const W1 = parseFloat(document.getElementById('total-weight').value);
+    const P1 = parseFloat(document.getElementById('avg-purity').value);
+    const Pt = parseFloat(document.getElementById('target-purity').value);
+    const P2 = parseFloat(document.getElementById('available-purity').value);
 
-    function calculateNetWeight() {
-      const weights = document.querySelectorAll('.weight');
-      const purities = document.querySelectorAll('.purity');
-      const nets = document.querySelectorAll('.net');
+    if (!isNaN(W1) && !isNaN(P1) && !isNaN(Pt) && !isNaN(P2) && P2 !== Pt) {
+      const W2 = (W1 * (Pt - P1)) / (P2 - Pt);
+      document.getElementById('weight-needed').value = W2 > 0 ? W2.toFixed(2) : '0.00';
+    } else document.getElementById('weight-needed').value = '';
 
-      let totalWeight = 0;
-      let totalNet = 0;
+    if (!isNaN(W1) && !isNaN(P1) && !isNaN(Pt) && Pt !== 0) {
+      const copperW = (W1 * (P1 - Pt)) / Pt;
+      document.getElementById('copper-needed').value = copperW > 0 ? copperW.toFixed(2) : '0.00';
+    } else document.getElementById('copper-needed').value = '';
+  }
 
-      for (let i = 0; i < weights.length; i++) {
-        const weight = parseFloat(weights[i].value) || 0;
-        const purity = parseFloat(purities[i].value) || 0;
-        const net = weight * purity / 999;
-        nets[i].value = net.toFixed(2);
-        totalWeight += weight;
-        totalNet += net;
-      }
-
-      document.getElementById('total-weight').value = totalWeight.toFixed(2);
-      document.getElementById('total-net').value = totalNet.toFixed(2);
-      if (totalWeight > 0) {
-        const avgPurity = (totalNet / totalWeight) * 999;
-        document.getElementById('avg-purity').value = avgPurity.toFixed(1);
-      } else {
-        document.getElementById('avg-purity').value = '';
-      }
-
-      calculateWeightNeeded();
-    }
-
-    function calculateWeightNeeded() {
-      const W1 = parseFloat(document.getElementById('total-weight').value);
-      const P1 = parseFloat(document.getElementById('avg-purity').value);
-      const Pt = parseFloat(document.getElementById('target-purity').value);
-      const P2 = parseFloat(document.getElementById('available-purity').value);
-
-      if (!isNaN(W1) && !isNaN(P1) && !isNaN(Pt) && !isNaN(P2) && P2 !== Pt) {
-        const W2 = (W1 * (Pt - P1)) / (P2 - Pt);
-        document.getElementById('weight-needed').value = W2 > 0 ? W2.toFixed(2) : '0.00';
-      } else {
-        document.getElementById('weight-needed').value = '';
-      }
-
-      if (!isNaN(W1) && !isNaN(P1) && !isNaN(Pt) && Pt !== 0) {
-        const copperW = (W1 * (P1 - Pt)) / Pt;
-        document.getElementById('copper-needed').value = copperW > 0 ? copperW.toFixed(2) : '0.00';
-      } else {
-        document.getElementById('copper-needed').value = '';
-      }
-    }
-
-    function clearAll() {
-      document.querySelectorAll('input').forEach(input => input.value = '');
-      const table = document.getElementById('data-table');
-      table.classList.add('fade');
-      setTimeout(() => table.classList.remove('fade'), 500);
-    }
-
-    function moveFocus(e, nextId) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        document.getElementById(nextId)?.focus();
-      }
-    }
-
-    for (let i = 0; i < 6; i++) addRow();
-  </script>
+  for (let i = 0; i < 4; i++) addRow();
+</script>
 </body>
 </html>
