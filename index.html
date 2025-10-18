@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gold Calculator | Bloudan Jewellery</title>
   <link rel="apple-touch-icon" href="Icon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -14,6 +14,18 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    html {
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     body {
@@ -25,6 +37,7 @@
       max-width: 800px;
       margin: 0 auto;
       font-size: 14px;
+      touch-action: manipulation;
     }
 
     .container {
@@ -80,6 +93,7 @@
       background: transparent;
       color: #64748b;
       min-width: 120px;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .mode-btn.active {
@@ -105,6 +119,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .btn-primary {
@@ -124,6 +139,7 @@
 
     .normal-calculator {
       display: none;
+      touch-action: manipulation;
     }
 
     /* Input Cards */
@@ -178,6 +194,10 @@
       color: #1e293b;
       transition: all 0.3s ease;
       min-height: 42px;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
     }
 
     .input-field:focus {
@@ -249,6 +269,10 @@
       color: #1e293b;
       min-height: 36px;
       text-align: center;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
     }
 
     .table-input:focus {
@@ -275,6 +299,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
+      touch-action: manipulation;
     }
 
     .calculator-current-input {
@@ -284,6 +309,10 @@
       word-break: break-all;
       margin-bottom: 8px;
       min-height: 2.2rem;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .calculator-live-result {
@@ -293,6 +322,10 @@
       word-break: break-all;
       min-height: 1.4rem;
       font-weight: 400;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .calculator-buttons {
@@ -300,6 +333,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       margin-bottom: 20px;
+      touch-action: manipulation;
     }
 
     .calc-btn {
@@ -313,6 +347,12 @@
       background: white;
       color: #1e293b;
       border: 1.5px solid #e2e8f0;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .calc-btn:hover {
@@ -371,6 +411,7 @@
       background: #1e3a8a;
       color: white;
       min-height: 40px;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .action-btn:hover {
@@ -730,6 +771,27 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // Prevent double-tap zoom on mobile
+    document.addEventListener('touchstart', function(event) {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    // Prevent context menu on long press
+    document.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+    });
+
     // Mode switching functionality
     let currentMode = 'gold';
 
