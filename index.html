@@ -863,17 +863,17 @@ max-width: 800px
 
       row.classList.add('slide-right');
       row.innerHTML = `
+       <td>
+          <input type="number" inputmode="decimal" class="table-input purity" id="purity-${rowCount + 1}" 
+                 step="0.1" oninput="calculateNetWeight()" 
+                 onkeydown="moveFocus(event, 'weight-${rowCount + 2}')"
+                 placeholder="0.0" />
+        </td>
         <td>
           <input type="number" inputmode="decimal" class="table-input weight" id="weight-${rowCount + 1}" 
                  step="0.01" oninput="calculateNetWeight()" 
                  onkeydown="moveFocus(event, 'purity-${rowCount + 1}')"
                  placeholder="0.00" />
-        </td>
-        <td>
-          <input type="number" inputmode="decimal" class="table-input purity" id="purity-${rowCount + 1}" 
-                 step="0.1" oninput="calculateNetWeight()" 
-                 onkeydown="moveFocus(event, 'weight-${rowCount + 2}')"
-                 placeholder="0.0" />
         </td>
         <td>
           <input type="number" inputmode="decimal" class="table-input result net" readonly />
