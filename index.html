@@ -271,35 +271,34 @@
       padding: 20px;
       border-radius: 12px;
       margin-bottom: 16px;
-      min-height: 120px;
+      min-height: 140px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
     }
 
     .calculator-expression {
-      font-size: 1rem;
+      font-size: 1.1rem;
       color: #94a3b8;
       text-align: right;
       margin-bottom: 8px;
-      min-height: 1.2rem;
+      min-height: 1.4rem;
       word-break: break-all;
+      font-weight: 400;
     }
 
     .calculator-display {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 300;
       text-align: right;
       word-break: break-all;
+      transition: all 0.3s ease;
     }
 
-    .calculator-result {
-      font-size: 1.4rem;
-      color: #cbd5e1;
-      text-align: right;
-      margin-top: 8px;
-      min-height: 1.6rem;
-      font-weight: 400;
+    .calculator-display.result-mode {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #fef3c7;
     }
 
     .calculator-buttons {
@@ -483,19 +482,15 @@
       
       .calculator-display-container {
         padding: 16px;
-        min-height: 100px;
+        min-height: 120px;
       }
       
       .calculator-display {
-        font-size: 1.5rem;
-      }
-      
-      .calculator-result {
-        font-size: 1.1rem;
+        font-size: 2rem;
       }
       
       .calculator-expression {
-        font-size: 0.9rem;
+        font-size: 1rem;
       }
       
       .calc-btn {
@@ -555,14 +550,15 @@
       
       .calculator-display-container {
         padding: 12px;
+        min-height: 100px;
       }
       
       .calculator-display {
-        font-size: 1.3rem;
+        font-size: 1.7rem;
       }
       
-      .calculator-result {
-        font-size: 1rem;
+      .calculator-expression {
+        font-size: 0.9rem;
       }
       
       .calc-btn {
@@ -703,13 +699,12 @@
       <div class="calculator-display-container">
         <div class="calculator-expression" id="expression"></div>
         <div class="calculator-display" id="display">0</div>
-        <div class="calculator-result" id="result"></div>
       </div>
       
       <div class="calculator-buttons">
         <button class="calc-btn clear" onclick="clearCalculator()">AC</button>
         <button class="calc-btn backspace" onclick="backspace()">⌫</button>
-        <button class="calc-btn" onclick="appendToDisplay('%')">%</button>
+        <button class="calc-btn" onclick="handlePercentage()">%</button>
         <button class="calc-btn operator" onclick="handleOperation('/')">÷</button>
         
         <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
@@ -873,125 +868,140 @@
       setTimeout(() => table.classList.remove('fade'), 500);
     }
 
-    // Normal Calculator Functions - UPDATED
-    let displayValue = '0';
-    let expression = '';
+    // Normal Calculator Functions - COMPLETELY REWRITTEN
+    let currentInput = '0';
+    let currentExpression = '';
     let shouldResetInput = false;
-    let lastResult = null;
+    let isInResultMode = false;
 
     function updateDisplay() {
       const display = document.getElementById('display');
       const expressionElement = document.getElementById('expression');
-      const resultElement = document.getElementById('result');
       
-      display.textContent = displayValue;
-      expressionElement.textContent = expression;
+      // Update expression line (shows full calculation)
+      expressionElement.textContent = currentExpression;
       
-      // Calculate and show live result
-      if (expression && !shouldResetInput) {
-        try {
-          const liveExpression = expression + displayValue;
-          const liveResult = evaluateExpression(liveExpression);
-          if (!isNaN(liveResult) && isFinite(liveResult)) {
-            resultElement.textContent = '= ' + formatNumber(liveResult);
-          } else {
-            resultElement.textContent = '';
-          }
-        } catch (e) {
-          resultElement.textContent = '';
-        }
+      // Update main display
+      display.textContent = currentInput;
+      
+      // Apply result mode styling if needed
+      if (isInResultMode) {
+        display.classList.add('result-mode');
       } else {
-        resultElement.textContent = '';
+        display.classList.remove('result-mode');
+      }
+      
+      // Calculate and show live result if we have an expression
+      if (currentExpression && !isInResultMode) {
+        calculateLiveResult();
       }
     }
 
-    function formatNumber(num) {
-      // Format number to avoid too many decimal places
-      if (num % 1 === 0) {
-        return num.toString();
-      } else {
-        return parseFloat(num.toFixed(8)).toString(); // Remove trailing zeros
+    function calculateLiveResult() {
+      // Don't calculate if we're in result mode or no expression
+      if (isInResultMode || !currentExpression) return;
+      
+      const fullExpression = currentExpression + currentInput;
+      try {
+        const result = evaluateExpression(fullExpression);
+        if (!isNaN(result) && isFinite(result)) {
+          // Update display with live result (this is just for internal use, not displayed)
+          return formatNumber(result);
+        }
+      } catch (e) {
+        // Ignore errors in live calculation
       }
+      return null;
     }
 
     function appendToDisplay(value) {
-      if (shouldResetInput) {
-        displayValue = value;
+      if (isInResultMode) {
+        // If we're in result mode and user starts typing, start new calculation
+        currentInput = value;
+        currentExpression = '';
+        isInResultMode = false;
+      } else if (shouldResetInput) {
+        currentInput = value;
         shouldResetInput = false;
       } else {
-        displayValue = displayValue === '0' ? value : displayValue + value;
+        currentInput = currentInput === '0' ? value : currentInput + value;
       }
       updateDisplay();
     }
 
     function backspace() {
-      if (displayValue.length > 1) {
-        displayValue = displayValue.slice(0, -1);
+      if (isInResultMode) {
+        clearCalculator();
+        return;
+      }
+      
+      if (currentInput.length > 1) {
+        currentInput = currentInput.slice(0, -1);
       } else {
-        displayValue = '0';
+        currentInput = '0';
       }
       updateDisplay();
     }
 
     function clearCalculator() {
-      displayValue = '0';
-      expression = '';
+      currentInput = '0';
+      currentExpression = '';
       shouldResetInput = false;
-      lastResult = null;
+      isInResultMode = false;
       updateDisplay();
     }
 
     function handleOperation(op) {
-      const inputValue = parseFloat(displayValue);
-      
-      if (expression === '') {
-        expression = displayValue + ' ' + op;
-      } else if (shouldResetInput) {
-        // Replace the last operator
-        expression = expression.slice(0, -1) + op;
+      if (isInResultMode) {
+        // If we just got a result, use it as the first operand
+        currentExpression = currentInput + ' ' + op + ' ';
+        currentInput = '0';
+        isInResultMode = false;
       } else {
-        // Calculate current expression and continue
-        const currentExpression = expression + displayValue;
-        try {
-          const result = evaluateExpression(currentExpression);
-          expression = formatNumber(result) + ' ' + op;
-          displayValue = formatNumber(result);
-        } catch (e) {
-          expression = displayValue + ' ' + op;
+        // Add current input to expression and prepare for next input
+        if (currentExpression === '') {
+          currentExpression = currentInput + ' ' + op + ' ';
+        } else {
+          // Check if we're replacing the last operator
+          const lastTwoChars = currentExpression.slice(-2);
+          if (['+ ', '- ', '* ', '/ '].includes(lastTwoChars)) {
+            currentExpression = currentExpression.slice(0, -2) + op + ' ';
+          } else {
+            currentExpression += currentInput + ' ' + op + ' ';
+          }
         }
+        currentInput = '0';
       }
-      
       shouldResetInput = true;
       updateDisplay();
     }
 
     function calculateResult() {
-      if (expression === '') return;
+      if (currentExpression === '') return;
 
-      const fullExpression = expression + displayValue;
+      const fullExpression = currentExpression + currentInput;
       try {
         const result = evaluateExpression(fullExpression);
         
-        // Show the full calculation in expression
-        expression = fullExpression + ' =';
-        displayValue = formatNumber(result);
+        // Store the result and clear the expression
+        const finalResult = formatNumber(result);
+        currentInput = finalResult;
+        currentExpression = '';
+        isInResultMode = true;
         shouldResetInput = true;
-        lastResult = result;
         
-        // Update display with final result
         updateDisplay();
-        
-        // After a short delay, clear the expression and keep only the result
-        setTimeout(() => {
-          if (shouldResetInput) { // Only if user hasn't started new input
-            expression = '';
-            updateDisplay();
-          }
-        }, 2000);
-        
       } catch (e) {
-        displayValue = 'Error';
+        currentInput = 'Error';
         shouldResetInput = true;
+        updateDisplay();
+      }
+    }
+
+    function handlePercentage() {
+      const current = parseFloat(currentInput);
+      if (!isNaN(current)) {
+        currentInput = String(current / 100);
         updateDisplay();
       }
     }
@@ -1000,8 +1010,8 @@
       // Replace display operators with JavaScript operators
       expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
       
-      // Remove any trailing operators
-      expr = expr.replace(/[\+\-\*\/]$/, '');
+      // Remove any trailing operators or spaces
+      expr = expr.replace(/[\+\-\*\/\s]+$/, '');
       
       // Use Function constructor for safe evaluation
       try {
@@ -1015,14 +1025,20 @@
       }
     }
 
-    function handlePercentage() {
-      const current = parseFloat(displayValue);
-      displayValue = String(current / 100);
-      updateDisplay();
+    function formatNumber(num) {
+      // Handle very small numbers
+      if (Math.abs(num) < 0.000001 && num !== 0) {
+        return num.toExponential(6);
+      }
+      
+      // Format regular numbers
+      if (num % 1 === 0) {
+        return num.toString();
+      } else {
+        // Remove trailing zeros
+        return parseFloat(num.toFixed(10)).toString();
+      }
     }
-
-    // Override percentage button
-    document.querySelector('.calc-btn[onclick="appendToDisplay(\'%\')"]').setAttribute('onclick', 'handlePercentage()');
 
     // Initialize calculator display
     updateDisplay();
