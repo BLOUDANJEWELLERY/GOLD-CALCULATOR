@@ -57,20 +57,24 @@ max-width: 800px
 
     /* Header Section */
     .header {
-       text-align: center;
-      padding: 20px 16px;
-      background: linear-gradient(90deg, #1d4ed8, #c7a332);
-      color: white;
-      border-bottom: 1px solid #334155;
-      text-align: center;
-      margin-bottom: 24px;
+    user-select: none;                  /* select-none */
+  position: sticky;                   /* sticky */
+  top: 0;                             /* top-0 */
+  background: linear-gradient(to right, #1d4ed8, #c7a332); /* bg-gradient-to-r from-[#1d4ed8] to-[#c7a332] */
+  color: white;                       /* text-white */
+  display: flex;                      /* flex */
+  justify-content: center;            /* justify-center */
+  align-items: center;                /* items-center */
+  padding: 1rem 1.25rem;              /* py-4 px-5 */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* shadow-md approximation */
+  z-index: 60; 
     }
 
     .header h1 {
-      font-size: 3rem;
-      font-weight: 300;
-      /*margin-bottom: 8px;*/
-      font: serif;
+        font-family: serif;                 /* font-serif */
+  font-size: 2.25rem;                 /* text-4xl */
+  letter-spacing: 0.05em;             /* tracking-wide approximation */
+  margin: 0;
     }
 
     .gold-line {
