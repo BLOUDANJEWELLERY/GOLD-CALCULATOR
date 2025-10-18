@@ -264,22 +264,42 @@
       font-weight: 600;
     }
 
-    /* Normal Calculator Styles */
-    .calculator-display {
+    /* Normal Calculator Styles - UPDATED */
+    .calculator-display-container {
       background: #1e293b;
       color: white;
       padding: 20px;
       border-radius: 12px;
+      margin-bottom: 16px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .calculator-expression {
+      font-size: 1rem;
+      color: #94a3b8;
       text-align: right;
+      margin-bottom: 8px;
+      min-height: 1.2rem;
+      word-break: break-all;
+    }
+
+    .calculator-display {
       font-size: 2rem;
       font-weight: 300;
-      margin-bottom: 16px;
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      text-align: right;
       word-break: break-all;
-      overflow-wrap: break-word;
+    }
+
+    .calculator-result {
+      font-size: 1.4rem;
+      color: #cbd5e1;
+      text-align: right;
+      margin-top: 8px;
+      min-height: 1.6rem;
+      font-weight: 400;
     }
 
     .calculator-buttons {
@@ -321,6 +341,12 @@
 
     .calc-btn.clear {
       background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+    }
+
+    .calc-btn.backspace {
+      background: linear-gradient(135deg, #6b7280, #9ca3af);
       color: white;
       border: none;
     }
@@ -455,10 +481,21 @@
         min-height: 38px;
       }
       
+      .calculator-display-container {
+        padding: 16px;
+        min-height: 100px;
+      }
+      
       .calculator-display {
         font-size: 1.5rem;
-        padding: 16px;
-        min-height: 70px;
+      }
+      
+      .calculator-result {
+        font-size: 1.1rem;
+      }
+      
+      .calculator-expression {
+        font-size: 0.9rem;
       }
       
       .calc-btn {
@@ -516,9 +553,16 @@
         padding: 6px 8px;
       }
       
+      .calculator-display-container {
+        padding: 12px;
+      }
+      
       .calculator-display {
         font-size: 1.3rem;
-        padding: 12px;
+      }
+      
+      .calculator-result {
+        font-size: 1rem;
       }
       
       .calc-btn {
@@ -654,30 +698,34 @@
       </div>
     </div>
 
-    <!-- Normal Calculator -->
+    <!-- Normal Calculator - UPDATED -->
     <div id="normal-calculator" class="normal-calculator">
-      <div class="calculator-display" id="display">0</div>
+      <div class="calculator-display-container">
+        <div class="calculator-expression" id="expression"></div>
+        <div class="calculator-display" id="display">0</div>
+        <div class="calculator-result" id="result"></div>
+      </div>
       
       <div class="calculator-buttons">
         <button class="calc-btn clear" onclick="clearCalculator()">AC</button>
-        <button class="calc-btn" onclick="appendToDisplay('±')">±</button>
+        <button class="calc-btn backspace" onclick="backspace()">⌫</button>
         <button class="calc-btn" onclick="appendToDisplay('%')">%</button>
-        <button class="calc-btn operator" onclick="appendToDisplay('/')">÷</button>
+        <button class="calc-btn operator" onclick="handleOperation('/')">÷</button>
         
         <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
         <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
         <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
-        <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+        <button class="calc-btn operator" onclick="handleOperation('*')">×</button>
         
         <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
         <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
         <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
-        <button class="calc-btn operator" onclick="appendToDisplay('-')">−</button>
+        <button class="calc-btn operator" onclick="handleOperation('-')">−</button>
         
         <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
         <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
         <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
-        <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+        <button class="calc-btn operator" onclick="handleOperation('+')">+</button>
         
         <button class="calc-btn zero" onclick="appendToDisplay('0')">0</button>
         <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
@@ -825,105 +873,155 @@
       setTimeout(() => table.classList.remove('fade'), 500);
     }
 
-    // Normal Calculator Functions
+    // Normal Calculator Functions - UPDATED
     let displayValue = '0';
-    let previousValue = null;
-    let operation = null;
-    let waitingForNewValue = false;
+    let expression = '';
+    let shouldResetInput = false;
+    let lastResult = null;
 
     function updateDisplay() {
       const display = document.getElementById('display');
+      const expressionElement = document.getElementById('expression');
+      const resultElement = document.getElementById('result');
+      
       display.textContent = displayValue;
+      expressionElement.textContent = expression;
+      
+      // Calculate and show live result
+      if (expression && !shouldResetInput) {
+        try {
+          const liveExpression = expression + displayValue;
+          const liveResult = evaluateExpression(liveExpression);
+          if (!isNaN(liveResult) && isFinite(liveResult)) {
+            resultElement.textContent = '= ' + formatNumber(liveResult);
+          } else {
+            resultElement.textContent = '';
+          }
+        } catch (e) {
+          resultElement.textContent = '';
+        }
+      } else {
+        resultElement.textContent = '';
+      }
+    }
+
+    function formatNumber(num) {
+      // Format number to avoid too many decimal places
+      if (num % 1 === 0) {
+        return num.toString();
+      } else {
+        return parseFloat(num.toFixed(8)).toString(); // Remove trailing zeros
+      }
     }
 
     function appendToDisplay(value) {
-      if (waitingForNewValue) {
+      if (shouldResetInput) {
         displayValue = value;
-        waitingForNewValue = false;
+        shouldResetInput = false;
       } else {
         displayValue = displayValue === '0' ? value : displayValue + value;
       }
       updateDisplay();
     }
 
+    function backspace() {
+      if (displayValue.length > 1) {
+        displayValue = displayValue.slice(0, -1);
+      } else {
+        displayValue = '0';
+      }
+      updateDisplay();
+    }
+
     function clearCalculator() {
       displayValue = '0';
-      previousValue = null;
-      operation = null;
-      waitingForNewValue = false;
+      expression = '';
+      shouldResetInput = false;
+      lastResult = null;
+      updateDisplay();
+    }
+
+    function handleOperation(op) {
+      const inputValue = parseFloat(displayValue);
+      
+      if (expression === '') {
+        expression = displayValue + ' ' + op;
+      } else if (shouldResetInput) {
+        // Replace the last operator
+        expression = expression.slice(0, -1) + op;
+      } else {
+        // Calculate current expression and continue
+        const currentExpression = expression + displayValue;
+        try {
+          const result = evaluateExpression(currentExpression);
+          expression = formatNumber(result) + ' ' + op;
+          displayValue = formatNumber(result);
+        } catch (e) {
+          expression = displayValue + ' ' + op;
+        }
+      }
+      
+      shouldResetInput = true;
       updateDisplay();
     }
 
     function calculateResult() {
-      if (previousValue === null || operation === null || waitingForNewValue) {
-        return;
+      if (expression === '') return;
+
+      const fullExpression = expression + displayValue;
+      try {
+        const result = evaluateExpression(fullExpression);
+        
+        // Show the full calculation in expression
+        expression = fullExpression + ' =';
+        displayValue = formatNumber(result);
+        shouldResetInput = true;
+        lastResult = result;
+        
+        // Update display with final result
+        updateDisplay();
+        
+        // After a short delay, clear the expression and keep only the result
+        setTimeout(() => {
+          if (shouldResetInput) { // Only if user hasn't started new input
+            expression = '';
+            updateDisplay();
+          }
+        }, 2000);
+        
+      } catch (e) {
+        displayValue = 'Error';
+        shouldResetInput = true;
+        updateDisplay();
       }
-
-      const current = parseFloat(displayValue);
-      let result;
-
-      switch (operation) {
-        case '+':
-          result = previousValue + current;
-          break;
-        case '-':
-          result = previousValue - current;
-          break;
-        case '*':
-          result = previousValue * current;
-          break;
-        case '/':
-          result = previousValue / current;
-          break;
-        default:
-          return;
-      }
-
-      displayValue = String(result);
-      previousValue = null;
-      operation = null;
-      waitingForNewValue = true;
-      updateDisplay();
     }
 
-    function handleOperation(nextOperation) {
-      const inputValue = parseFloat(displayValue);
-
-      if (previousValue === null) {
-        previousValue = inputValue;
-      } else if (operation) {
-        calculateResult();
-        previousValue = parseFloat(displayValue);
+    function evaluateExpression(expr) {
+      // Replace display operators with JavaScript operators
+      expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+      
+      // Remove any trailing operators
+      expr = expr.replace(/[\+\-\*\/]$/, '');
+      
+      // Use Function constructor for safe evaluation
+      try {
+        const result = Function('"use strict"; return (' + expr + ')')();
+        if (typeof result !== 'number' || !isFinite(result)) {
+          throw new Error('Invalid result');
+        }
+        return result;
+      } catch (error) {
+        throw new Error('Evaluation error');
       }
-
-      waitingForNewValue = true;
-      operation = nextOperation;
     }
 
-    // Override the operator buttons to use handleOperation
-    document.querySelectorAll('.calc-btn.operator').forEach(button => {
-      const originalOnClick = button.getAttribute('onclick');
-      if (originalOnClick && originalOnClick.includes("appendToDisplay")) {
-        const operator = originalOnClick.match(/'([^']+)'/)[1];
-        button.setAttribute('onclick', `handleOperation('${operator}')`);
-      }
-    });
-
-    // Handle percentage
     function handlePercentage() {
       const current = parseFloat(displayValue);
       displayValue = String(current / 100);
       updateDisplay();
     }
 
-    // Handle plus/minus
-    function handlePlusMinus() {
-      displayValue = String(parseFloat(displayValue) * -1);
-      updateDisplay();
-    }
-
-    // Override special buttons
-    document.querySelector('.calc-btn[onclick="appendToDisplay(\'±\')"]').setAttribute('onclick', 'handlePlusMinus()');
+    // Override percentage button
     document.querySelector('.calc-btn[onclick="appendToDisplay(\'%\')"]').setAttribute('onclick', 'handlePercentage()');
 
     // Initialize calculator display
