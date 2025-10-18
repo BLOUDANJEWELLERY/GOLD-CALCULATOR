@@ -10,28 +10,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* Fonts & Base */
+    /* Base Styles */
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
-      padding: 0 12px;
-      max-width: 640px;
+      padding: 0 1rem;
+      max-width: 720px;
       margin-inline: auto;
-      background: linear-gradient(to bottom right, #f8fafc, #ffffff, #fff7ed);
-      color: #1e293b;
+      background: linear-gradient(to bottom right, #e0e7ff, #f8fafc);
+      color: #1d4ed8;
       transition: background 0.3s, color 0.3s;
     }
     h2 {
       font-family: 'Playfair Display', serif;
-      font-weight: 400;
+      font-weight: 600;
       font-size: 2.5rem;
       text-align: center;
-      color: #1e3a8a;
+      color: #1d4ed8;
       margin: 1.5rem 0;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
-    /* Inputs & Sections */
+    /* Inputs */
     .input-section {
       display: grid;
       gap: 1rem;
@@ -45,14 +45,14 @@
     .input-section input {
       padding: 0.6rem 0.8rem;
       border-radius: 0.75rem;
-      border: 2px solid #f59e0b;
+      border: 2px solid #c7a332;
       font-size: 1rem;
       transition: border-color 0.3s, background 0.3s;
     }
     .input-section input:focus {
       outline: none;
-      border-color: #fbbf24;
-      background-color: #fef3c7;
+      border-color: #1d4ed8;
+      background-color: #fef7ed;
     }
 
     /* Table */
@@ -72,25 +72,25 @@
       font-size: 0.95rem;
     }
     thead {
-      background: linear-gradient(to right, #fbbf24, #f59e0b, #d97706);
-      color: white;
+      background: linear-gradient(to right, #1d4ed8, #1e40af);
+      color: #c7a332;
     }
     tbody tr:nth-child(even) {
-      background-color: #fef3c7;
+      background-color: #fef7ed;
     }
     tbody input {
       width: 100%;
       padding: 0.4rem 0.6rem;
       border-radius: 0.5rem;
-      border: 1px solid #f59e0b;
+      border: 1px solid #c7a332;
       text-align: center;
       font-weight: 500;
       transition: all 0.3s;
     }
     tfoot input {
       font-weight: bold;
-      background-color: #fef3c7;
-      border: 2px solid #f59e0b;
+      background-color: #fef7ed;
+      border: 2px solid #c7a332;
     }
 
     /* Buttons */
@@ -102,8 +102,8 @@
       margin-bottom: 2rem;
     }
     button {
-      background: linear-gradient(to bottom right, #fbbf24, #f59e0b, #d97706);
-      color: white;
+      background: linear-gradient(to bottom right, #1d4ed8, #2563eb);
+      color: #c7a332;
       border: none;
       padding: 0.75rem 1.25rem;
       font-size: 1rem;
@@ -114,7 +114,7 @@
     }
     button:hover {
       transform: scale(1.05);
-      background: linear-gradient(to bottom right, #fcd34d, #fbbf24, #f59e0b);
+      background: linear-gradient(to bottom right, #2563eb, #1e40af);
     }
     button i {
       margin-left: 0.5rem;
@@ -148,26 +148,26 @@
 
     /* Dark Mode */
     body.dark-mode {
-      background: linear-gradient(to bottom right, #0f172a, #111827);
-      color: #f8fafc;
+      background: linear-gradient(to bottom right, #1e293b, #0f172a);
+      color: #c7a332;
     }
     body.dark-mode h2 {
-      color: #fbbf24;
+      color: #1d4ed8;
     }
     body.dark-mode table thead {
-      background: linear-gradient(to right, #d97706, #f59e0b, #fbbf24);
-      color: #000;
+      background: linear-gradient(to right, #1d4ed8, #2563eb);
+      color: #c7a332;
     }
     body.dark-mode tbody tr:nth-child(even) {
       background-color: #1e293b;
     }
     body.dark-mode input {
       background-color: #1e293b;
-      color: #f8fafc;
-      border: 1px solid #f59e0b;
+      color: #c7a332;
+      border: 1px solid #c7a332;
     }
     body.dark-mode button {
-      color: #000;
+      color: #c7a332;
     }
 
     /* Footer */
@@ -175,9 +175,17 @@
       text-align: center;
       padding: 1.5rem;
       font-weight: 500;
-      background: linear-gradient(to right, #1e40af, #f59e0b);
-      color: white;
+      background: linear-gradient(to right, #1d4ed8, #2563eb);
+      color: #c7a332;
       border-radius: 0.75rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      h2 { font-size: 2rem; }
+      .input-section { gap: 0.75rem; }
+      button { font-size: 0.9rem; padding: 0.65rem 1rem; }
+      th, td { font-size: 0.85rem; padding: 0.6rem; }
     }
   </style>
 </head>
@@ -330,38 +338,6 @@
       const table = document.getElementById('data-table');
       table.classList.add('fade');
       setTimeout(() => table.classList.remove('fade'), 500);
-    }
-
-    async function takeScreenshotPage() {
-      document.body.classList.add('no-animations');
-      const canvas = await html2canvas(document.body, { backgroundColor: null, scale: 2 });
-      canvas.toBlob(blob => {
-        const file = new File([blob], "gold_calculator_screenshot.png", { type: "image/png" });
-        const link = document.createElement('a');
-        link.download = 'gold_calculator_screenshot.png';
-        link.href = URL.createObjectURL(blob);
-        link.click();
-      }, 'image/png');
-      document.body.classList.remove('no-animations');
-    }
-
-    async function takeScreenshotTable() {
-      const table = document.getElementById('data-table');
-      document.body.classList.add('no-animations');
-      const screenshotBg = document.body.classList.contains('dark-mode') ? '#0f172a' : '#fef7ed';
-      const originalTableBg = table.style.backgroundColor;
-      table.style.backgroundColor = screenshotBg;
-
-      const canvas = await html2canvas(table, { backgroundColor: screenshotBg, scale: 2 });
-      canvas.toBlob(blob => {
-        const link = document.createElement('a');
-        link.download = 'gold_calculator_table_screenshot.png';
-        link.href = URL.createObjectURL(blob);
-        link.click();
-      }, 'image/png');
-
-      table.style.backgroundColor = originalTableBg;
-      document.body.classList.remove('no-animations');
     }
 
     function moveFocus(e, nextId) {
