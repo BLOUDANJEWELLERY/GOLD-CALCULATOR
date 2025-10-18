@@ -862,9 +862,10 @@
       setTimeout(() => table.classList.remove('fade'), 500);
     }
 
-    // Normal Calculator Functions - COMPLETELY REWRITTEN
+    // Normal Calculator Functions - FIXED CONTINUATION BEHAVIOR
     let currentInput = '0';
     let isNewCalculation = true;
+    let lastResult = null;
 
     function updateDisplay() {
       const currentInputElement = document.getElementById('current-input');
@@ -879,6 +880,7 @@
           const result = evaluateExpression(currentInput);
           if (!isNaN(result) && isFinite(result)) {
             liveResultElement.textContent = '= ' + formatNumber(result);
+            lastResult = result;
           } else {
             liveResultElement.textContent = '';
           }
@@ -892,10 +894,12 @@
 
     function appendToDisplay(value) {
       if (isNewCalculation) {
-        if (value === '.') {
-          currentInput = '0.';
-        } else {
+        // If we have a previous result and user types a number, start fresh
+        if (lastResult !== null && /[0-9]/.test(value)) {
           currentInput = value;
+        } else {
+          // If user types after result, continue from result
+          currentInput = lastResult !== null ? lastResult.toString() + value : value;
         }
         isNewCalculation = false;
       } else {
@@ -926,11 +930,16 @@
     function clearCalculator() {
       currentInput = '0';
       isNewCalculation = true;
+      lastResult = null;
       updateDisplay();
     }
 
     function handleOperation(op) {
-      if (isNewCalculation) {
+      if (isNewCalculation && lastResult !== null) {
+        // Continue from previous result with new operator
+        currentInput = lastResult.toString() + op;
+        isNewCalculation = false;
+      } else if (isNewCalculation) {
         currentInput = '0' + op;
         isNewCalculation = false;
       } else {
@@ -952,7 +961,8 @@
         const result = evaluateExpression(currentInput);
         const formattedResult = formatNumber(result);
         
-        // Clear current input and show result in current input line
+        // Store result and set as current input
+        lastResult = result;
         currentInput = formattedResult;
         isNewCalculation = true;
         
@@ -960,6 +970,7 @@
       } catch (e) {
         currentInput = 'Error';
         isNewCalculation = true;
+        lastResult = null;
         updateDisplay();
       }
     }
@@ -972,11 +983,13 @@
         const result = evaluateExpression(currentInput);
         const percentageResult = result / 100;
         currentInput = formatNumber(percentageResult);
+        lastResult = percentageResult;
         isNewCalculation = true;
         updateDisplay();
       } catch (e) {
         currentInput = 'Error';
         isNewCalculation = true;
+        lastResult = null;
         updateDisplay();
       }
     }
