@@ -21,9 +21,10 @@
       min-height: 100vh;
       background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #fef3c7 100%);
       color: #1e293b;
-      padding: 16px;
+      padding: 12px;
       max-width: 800px;
       margin: 0 auto;
+      font-size: 14px;
     }
 
     .container {
@@ -34,22 +35,22 @@
     /* Header Section */
     .header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
     .header h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 300;
       color: #1e3a8a;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       font-family: 'Georgia', 'Times New Roman', serif;
     }
 
     .gold-line {
-      width: 80px;
-      height: 3px;
+      width: 60px;
+      height: 2px;
       background: linear-gradient(90deg, #f59e0b, #eab308, #d97706);
-      margin: 0 auto 24px;
+      margin: 0 auto 20px;
       border-radius: 2px;
     }
 
@@ -57,16 +58,16 @@
     .toggle-container {
       display: flex;
       justify-content: center;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       transition: all 0.3s ease;
       font-family: 'Inter', sans-serif;
@@ -79,44 +80,35 @@
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
-    }
-
-    .btn-secondary {
-      background: #1e3a8a;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #1e40af;
-      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
     }
 
     /* Input Cards */
     .input-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
     @media (max-width: 640px) {
       .input-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
       }
     }
 
     .input-card {
       position: relative;
-      padding: 2px;
-      border-radius: 16px;
+      padding: 1.5px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #f59e0b, #eab308, #d97706);
     }
 
     .input-card-inner {
       background: linear-gradient(135deg, #ffffff, #f8fafc);
-      border-radius: 14px;
-      padding: 20px;
+      border-radius: 10px;
+      padding: 16px;
       height: 100%;
     }
 
@@ -128,26 +120,27 @@
       display: block;
       font-weight: 600;
       color: #374151;
-      margin-bottom: 8px;
-      font-size: 14px;
+      margin-bottom: 6px;
+      font-size: 13px;
     }
 
     .input-field {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e5e7eb;
-      border-radius: 10px;
-      font-size: 16px;
+      padding: 10px 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 500;
       background: white;
       color: #1e293b;
       transition: all 0.3s ease;
+      min-height: 42px;
     }
 
     .input-field:focus {
       outline: none;
       border-color: #f59e0b;
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
     }
 
     .input-field.result {
@@ -155,40 +148,43 @@
       border-color: #f59e0b;
       color: #92400e;
       font-weight: 600;
+      font-size: 13px;
     }
 
-    /* Table Styling */
+    /* Table Styling - More Compact */
     .table-container {
       position: relative;
-      padding: 2px;
-      border-radius: 16px;
+      padding: 1.5px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #f59e0b, #eab308, #d97706);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .table-inner {
       background: white;
-      border-radius: 14px;
-      padding: 4px;
+      border-radius: 10px;
+      padding: 2px;
       overflow: hidden;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 13px;
     }
 
     th {
       background: linear-gradient(135deg, #fef3c7, #fef9c3);
-      padding: 16px 12px;
+      padding: 12px 8px;
       text-align: center;
       font-weight: 700;
       color: #92400e;
       border-bottom: 2px solid #f59e0b;
+      font-size: 12px;
     }
 
     td {
-      padding: 12px;
+      padding: 8px;
       border-bottom: 1px solid #e5e7eb;
     }
 
@@ -196,36 +192,64 @@
       background: linear-gradient(135deg, #fef3c7, #fef9c3);
       border-bottom: none;
       font-weight: 600;
+      padding: 10px 8px;
+    }
+
+    /* Table input fields - optimized for mobile */
+    .table-input {
+      width: 100%;
+      padding: 8px 6px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      background: white;
+      color: #1e293b;
+      min-height: 36px;
+      text-align: center;
+    }
+
+    .table-input:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+    }
+
+    .table-input.result {
+      background: linear-gradient(135deg, #fef3c7, #fef9c3);
+      border-color: #f59e0b;
+      color: #92400e;
+      font-weight: 600;
     }
 
     /* Action Buttons */
     .action-buttons {
       display: flex;
       justify-content: center;
-      gap: 16px;
-      margin: 32px 0;
+      gap: 12px;
+      margin: 24px 0;
       flex-wrap: wrap;
     }
 
     .action-btn {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 14px 24px;
+      gap: 6px;
+      padding: 10px 16px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       transition: all 0.3s ease;
       background: #1e3a8a;
       color: white;
+      min-height: 40px;
     }
 
     .action-btn:hover {
       background: #1e40af;
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
     }
 
     .action-btn.add {
@@ -247,15 +271,15 @@
     /* Footer */
     footer {
       text-align: center;
-      padding: 24px 16px;
+      padding: 20px 16px;
       background: linear-gradient(90deg, #1d4ed8, #c7a332);
       color: white;
-      border-radius: 12px;
-      margin-top: 40px;
+      border-radius: 10px;
+      margin-top: 32px;
     }
 
     footer p {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
     }
 
@@ -292,19 +316,83 @@
       transition: none !important;
     }
 
-    /* Responsive */
+    /* Enhanced Mobile Responsiveness */
     @media (max-width: 480px) {
+      body {
+        padding: 10px;
+        font-size: 13px;
+      }
+      
       .header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+      }
+      
+      .input-grid {
+        gap: 8px;
+      }
+      
+      .input-card-inner {
+        padding: 12px;
+      }
+      
+      .input-field {
+        padding: 8px 10px;
+        font-size: 13px;
+        min-height: 38px;
+      }
+      
+      th {
+        padding: 10px 6px;
+        font-size: 11px;
+      }
+      
+      td {
+        padding: 6px;
+      }
+      
+      .table-input {
+        padding: 6px 4px;
+        font-size: 12px;
+        min-height: 34px;
       }
       
       .action-buttons {
-        gap: 12px;
+        gap: 8px;
       }
       
       .action-btn {
-        padding: 12px 20px;
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 36px;
+      }
+      
+      footer {
+        padding: 16px 12px;
+      }
+      
+      footer p {
         font-size: 13px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .input-field {
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+      
+      .table-input {
+        font-size: 11px;
+        padding: 5px 3px;
+      }
+      
+      .action-btn {
+        padding: 6px 10px;
+        font-size: 11px;
       }
     }
   </style>
@@ -385,9 +473,9 @@
           </tbody>
           <tfoot>
             <tr>
-              <td><input type="number" id="total-weight" class="input-field result" readonly /></td>
-              <td><input type="number" id="avg-purity" class="input-field result" readonly /></td>
-              <td><input type="number" id="total-net" class="input-field result" readonly /></td>
+              <td><input type="number" id="total-weight" class="table-input result" readonly /></td>
+              <td><input type="number" id="avg-purity" class="table-input result" readonly /></td>
+              <td><input type="number" id="total-net" class="table-input result" readonly /></td>
             </tr>
           </tfoot>
         </table>
@@ -429,19 +517,19 @@
       row.classList.add('slide-right');
       row.innerHTML = `
         <td>
-          <input type="number" class="input-field weight" id="weight-${rowCount + 1}" 
+          <input type="number" class="table-input weight" id="weight-${rowCount + 1}" 
                  step="0.01" oninput="calculateNetWeight()" 
                  onkeydown="moveFocus(event, 'purity-${rowCount + 1}')"
                  placeholder="0.00" />
         </td>
         <td>
-          <input type="number" class="input-field purity" id="purity-${rowCount + 1}" 
+          <input type="number" class="table-input purity" id="purity-${rowCount + 1}" 
                  step="0.1" oninput="calculateNetWeight()" 
                  onkeydown="moveFocus(event, 'weight-${rowCount + 2}')"
                  placeholder="0.0" />
         </td>
         <td>
-          <input type="number" class="input-field result net" readonly />
+          <input type="number" class="table-input result net" readonly />
         </td>
       `;
       tableBody.appendChild(row);
