@@ -5,31 +5,170 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Offline</title>
   <style>
-  html, body {
-  overscroll-behavior: none; /* Prevent pull-to-refresh / rubber-band */
-  overflow-y: hidden /*;Optional: prevent vertical scrolling if page fits */
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
+    html, body {
+      overscroll-behavior: none;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
 
     body {
-      font-family: system-ui, sans-serif;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
       height: 100vh;
-      background: #f9f4ef;
-      color: #4b3832;
+      background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+      color: #333;
       margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
     }
-    h1 { color: #a67b5b; }
+
+    .offline-container {
+      max-width: 500px;
+      width: 100%;
+      padding: 40px 30px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(29, 78, 216, 0.1);
+      border: 1px solid rgba(29, 78, 216, 0.1);
+    }
+
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      position: relative;
+    }
+
+    .offline-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    h1 {
+      color: #1d4ed8;
+      font-size: 2.2rem;
+      margin: 0 0 15px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #555;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin: 0 0 30px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .retry-button {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .retry-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+    }
+
+    .retry-button:active {
+      transform: translateY(0);
+    }
+
+    .retry-button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .retry-button:hover::after {
+      left: 100%;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 25px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .connection-status::before {
+      content: '';
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #e53e3e;
+      margin-right: 8px;
+    }
+
+    .hint {
+      margin-top: 25px;
+      font-size: 0.9rem;
+      color: #777;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media (max-width: 480px) {
+      .offline-container {
+        padding: 30px 20px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>You’re Offline</h1>
-  <p>Please reconnect to continue.</p>
-  <button onclick="window.location.reload()">Retry</button>
+  <div class="offline-container">
+    <div class="offline-icon">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="#fef3c7" stroke="#c7a332" stroke-width="2"/>
+        <path d="M35 35 L65 65 M65 35 L35 65" stroke="#c7a332" stroke-width="4" stroke-linecap="round"/>
+        <path d="M30 65 L70 65" stroke="#c7a332" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="40" r="5" fill="#c7a332"/>
+      </svg>
+    </div>
+    
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Please check your network settings and try again.</p>
+    
+    <button class="retry-button" onclick="window.location.reload()">Retry Connection</button>
+    
+    <div class="connection-status">No internet connection detected</div>
+    
+    <div class="hint">
+      If the problem persists, try restarting your router or checking your device's network settings.
+    </div>
+  </div>
 </body>
 </html>
