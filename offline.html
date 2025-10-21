@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <link rel="apple-touch-icon" href="Icons/Icon.png">
-<link rel="icon" type="image/png" href="Icons/Icon.png">
- 
   <title>Offline</title>
   <style>
+  html, body {
+  overscroll-behavior: none; /* Prevent pull-to-refresh / rubber-band */
+  /*overflow-y: hidden;Optional: prevent vertical scrolling if page fits */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
     body {
       font-family: system-ui, sans-serif;
       text-align: center;
