@@ -7,7 +7,7 @@
   <style>
   html, body {
   overscroll-behavior: none; /* Prevent pull-to-refresh / rubber-band */
-  /*overflow-y: hidden;Optional: prevent vertical scrolling if page fits */
+  overflow-y: hidden /*;Optional: prevent vertical scrolling if page fits */
   margin: 0;
   padding: 0;
   height: 100%;
@@ -30,5 +30,6 @@
 <body>
   <h1>You’re Offline</h1>
   <p>Please reconnect to continue.</p>
+  <button onclick="window.location.reload()">Retry</button>
 </body>
 </html>
