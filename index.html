@@ -29,6 +29,13 @@
       user-select: none;
     }
 
+ html, body {
+  overscroll-behavior: none; /* Prevent pull-to-refresh / rubber-band */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
     html {
       touch-action: manipulation;
       -webkit-text-size-adjust: 100%;
