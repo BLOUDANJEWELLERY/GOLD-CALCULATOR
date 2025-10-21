@@ -1,6 +1,6 @@
 {
   "name": "Gold Calculator",
-  "short_name": "GoldCalc",
+  "short_name": "Gold Calculator",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
