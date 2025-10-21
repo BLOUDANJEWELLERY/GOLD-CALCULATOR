@@ -2,14 +2,14 @@ const CACHE_NAME = 'single-page-cache-v1';
 const OFFLINE_URL = '/offline.html';
 
 const FILES_TO_CACHE = [
-  '/index.html',
-  '/offline.html',
-  '/Icon-512.png',
-  '/Icon.png',
-  '/icon-192.png',
-  '/Icons/Icon.png',
-  '/Icons/icon-192.png',
-  '/Icons/icon-512.png'
+  './index.html',
+  './offline.html',
+  './Icon-512.png',
+  './Icon.png',
+  './icon-192.png',
+  './Icons/Icon.png',
+  './Icons/icon-192.png',
+  './Icons/icon-512.png'
 ];
 
 // Install – cache main page and offline fallback with detailed error logging
