@@ -8,8 +8,8 @@ self.addEventListener('install', (event) => {
       return cache.addAll([
         '/index.html',
         '/offline.html',
-        '/icons/icon-192x192.png',
-        '/icons/icon-512x512.png'
+        '/icons/icon-192.png',
+        '/icons/icon-512.png'
       ]);
     })
   );
