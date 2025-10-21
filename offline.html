@@ -2,41 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Offline | Bloudan Jewellery</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
     html, body {
       overscroll-behavior: none;
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    html {
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     body {
-      text-align: center;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(
+        to bottom,
+        #fef3c7 0%,
+        #f8fafc 25%,
+        #fef3c7 50%,
+        #f8fafc 75%,
+        #fef3c7 100%
+      );
+      display: flex;
+      flex-direction: column;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #1e293b;
+      font-size: 14px;
+      touch-action: manipulation;
+    }
+
+    /* Header Section - Matching Gold Calculator */
+    .header {
+      user-select: none;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to right, #1d4ed8, #c7a332);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem 1.25rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      z-index: 60;
+      margin-bottom: 15px;
+    }
+
+    .header h1 {
+      font-family: serif;
+      font-size: 3.25rem;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    /* Main Content Container */
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 12px;
+      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
-      color: #333;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
     }
 
+    /* Offline Content Card */
     .offline-container {
-      max-width: 500px;
-      width: 100%;
-      padding: 40px 30px;
       background: white;
-      border-radius: 16px;
+      border-radius: 12px;
+      padding: 40px 30px;
       box-shadow: 0 10px 30px rgba(29, 78, 216, 0.1);
       border: 1px solid rgba(29, 78, 216, 0.1);
+      text-align: center;
+      margin-bottom: 20px;
     }
 
+    /* Offline Icon */
     .offline-icon {
       width: 120px;
       height: 120px;
@@ -66,7 +125,12 @@
       margin-right: auto;
     }
 
+    /* Retry Button - Matching Gold Calculator Style */
     .retry-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
       color: white;
       border: none;
@@ -79,6 +143,8 @@
       box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
       position: relative;
       overflow: hidden;
+      margin: 0 auto;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .retry-button:hover {
@@ -105,6 +171,7 @@
       left: 100%;
     }
 
+    /* Connection Status */
     .connection-status {
       display: flex;
       align-items: center;
@@ -124,6 +191,7 @@
       margin-right: 8px;
     }
 
+    /* Hint Text */
     .hint {
       margin-top: 25px;
       font-size: 0.9rem;
@@ -133,9 +201,31 @@
       margin-right: auto;
     }
 
+    /* Footer - Matching Gold Calculator */
+    footer {
+      text-align: center;
+      padding: 20px 16px;
+      background: linear-gradient(90deg, #1d4ed8, #c7a332);
+      color: white;
+      border-top: 1px solid #334155;
+      border-radius: 0px;
+      margin-top: auto;
+    }
+
+    footer p {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Responsive Design */
     @media (max-width: 480px) {
       .offline-container {
         padding: 30px 20px;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
       }
       
       h1 {
@@ -145,30 +235,95 @@
       p {
         font-size: 1rem;
       }
+      
+      .retry-button {
+        padding: 12px 24px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .offline-container {
+        padding: 20px 15px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .retry-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="offline-container">
-    <div class="offline-icon">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="45" fill="#fef3c7" stroke="#c7a332" stroke-width="2"/>
-        <path d="M35 35 L65 65 M65 35 L35 65" stroke="#c7a332" stroke-width="4" stroke-linecap="round"/>
-        <path d="M30 65 L70 65" stroke="#c7a332" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="50" cy="40" r="5" fill="#c7a332"/>
-      </svg>
-    </div>
-    
-    <h1>You're Offline</h1>
-    <p>It looks like you've lost your internet connection. Please check your network settings and try again.</p>
-    
-    <button class="retry-button" onclick="window.location.reload()">Retry Connection</button>
-    
-    <div class="connection-status">No internet connection detected</div>
-    
-    <div class="hint">
-      If the problem persists, try restarting your router or checking your device's network settings.
+  <!-- Header Section - Matching Gold Calculator -->
+  <div class="header">
+    <h1>Gold Calculator</h1>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="offline-container">
+      <div class="offline-icon">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="#fef3c7" stroke="#c7a332" stroke-width="2"/>
+          <path d="M35 35 L65 65 M65 35 L35 65" stroke="#c7a332" stroke-width="4" stroke-linecap="round"/>
+          <path d="M30 65 L70 65" stroke="#c7a332" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="50" cy="40" r="5" fill="#c7a332"/>
+        </svg>
+      </div>
+      
+      <h1>You're Offline</h1>
+      <p>It looks like you've lost your internet connection. Please check your network settings and try again.</p>
+      
+      <button class="retry-button" onclick="window.location.reload()">
+        <i class="fas fa-sync-alt"></i> Retry Connection
+      </button>
+      
+      <div class="connection-status">No internet connection detected</div>
+      
+      <div class="hint">
+        If the problem persists, try restarting your router or checking your device's network settings.
+      </div>
     </div>
   </div>
+
+  <!-- Footer - Matching Gold Calculator -->
+  <footer>
+    <p>© 2025 Bloudan Jewellery | Built by Waleed Sheeraz</p>
+  </footer>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <script>
+    // Prevent double-tap zoom on mobile
+    document.addEventListener('touchstart', function(event) {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    // Prevent context menu on long press
+    document.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+    });
+  </script>
 </body>
 </html>
