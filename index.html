@@ -807,29 +807,29 @@ max-width: 800px
       </div>
       
       <div class="calculator-buttons">
-        <button class="calc-btn clear" onclick="clearCalculator()">AC</button>
-        <button class="calc-btn backspace" onclick="backspace()">⌫</button>
-        <button class="calc-btn" onclick="handlePercentage()">%</button>
-        <button class="calc-btn operator" onclick="handleOperation('/')">÷</button>
+        <button class="calc-btn clear" onpointerdown="clearCalculator()">AC</button>
+        <button class="calc-btn backspace" onpointerdown="backspace()">⌫</button>
+        <button class="calc-btn" onpointerdown="handlePercentage()">%</button>
+        <button class="calc-btn operator" onpointerdown="handleOperation('/')">÷</button>
         
         <button class="calc-btn" onpointerdown="appendToDisplay('7')">7</button>
-        <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
-        <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
-        <button class="calc-btn operator" onclick="handleOperation('*')">×</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('8')">8</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('9')">9</button>
+        <button class="calc-btn operator" onpointerdown="handleOperation('*')">×</button>
         
-        <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
-        <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
-        <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
-        <button class="calc-btn operator" onclick="handleOperation('-')">−</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('4')">4</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('5')">5</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('6')">6</button>
+        <button class="calc-btn operator" onpointerdown="handleOperation('-')">−</button>
         
-        <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
-        <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
-        <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
-        <button class="calc-btn operator" onclick="handleOperation('+')">+</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('1')">1</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('2')">2</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('3')">3</button>
+        <button class="calc-btn operator" onpointerdown="handleOperation('+')">+</button>
         
-        <button class="calc-btn zero" onclick="appendToDisplay('0')">0</button>
-        <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
-        <button class="calc-btn equals" onclick="calculateResult()">=</button>
+        <button class="calc-btn zero" onpointerdown="appendToDisplay('0')">0</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('.')">.</button>
+        <button class="calc-btn equals" onpointerdown="calculateResult()">=</button>
       </div>
     </div>
 
