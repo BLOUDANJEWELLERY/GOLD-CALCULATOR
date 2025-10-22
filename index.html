@@ -371,6 +371,8 @@ max-width: 800px
     }
 
     .calc-btn {
+      touch-action: manipulation;
+  user-select: none;
       padding: 16px 8px;
       border: none;
       border-radius: 10px;
@@ -391,6 +393,7 @@ max-width: 800px
 
     .calc-btn:hover {
       transform: translateY(-2px);
+      transition: transform 0.05s ease; /* fast feedback */
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
@@ -809,7 +812,7 @@ max-width: 800px
         <button class="calc-btn" onclick="handlePercentage()">%</button>
         <button class="calc-btn operator" onclick="handleOperation('/')">÷</button>
         
-        <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+        <button class="calc-btn" onpointerdown="appendToDisplay('7')">7</button>
         <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
         <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
         <button class="calc-btn operator" onclick="handleOperation('*')">×</button>
