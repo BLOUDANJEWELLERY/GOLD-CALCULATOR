@@ -12,28 +12,20 @@ const FILES_TO_CACHE = [
   './Icons/icon-512.png'
 ];
 
-// Install – cache main page and offline fallback with detailed error logging
+// Install – cache main page and offline fallback
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker and caching assets...');
-  
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
       for (const url of FILES_TO_CACHE) {
         try {
           const response = await fetch(url);
-          if (!response.ok) {
-            console.error(`[SW] ❌ Failed to fetch ${url}: ${response.status} ${response.statusText}`);
-            continue;
+          if (response.ok) {
+            await cache.put(url, response);
           }
-          await cache.put(url, response);
-          console.log(`[SW] ✅ Cached successfully: ${url}`);
-        } catch (err) {
-          console.error(`[SW] ⚠️ Error caching ${url}:`, err);
-        }
+        } catch (_) {}
       }
     })
   );
-
   self.skipWaiting();
 });
 
@@ -41,37 +33,26 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          return response;
-        })
-        .catch(async () => {
-          const cache = await caches.open(CACHE_NAME);
-          const cachedResponse = await cache.match(OFFLINE_URL);
-          return cachedResponse;
-        })
+      fetch(event.request).catch(async () => {
+        const cache = await caches.open(CACHE_NAME);
+        return await cache.match(OFFLINE_URL);
+      })
     );
   } else {
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
-      })
+      caches.match(event.request).then((response) => response || fetch(event.request))
     );
   }
 });
 
 // Activate – cleanup old caches if version changes
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating new service worker...');
   event.waitUntil(
     caches.keys().then((cacheNames) =>
       Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
-          .map((name) => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
+          .map((name) => caches.delete(name))
       )
     )
   );
