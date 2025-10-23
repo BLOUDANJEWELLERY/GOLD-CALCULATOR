@@ -30,21 +30,18 @@
     }
 
 html, body {
-  overscroll-behavior: none;
   margin: 0;
   padding: 0;
   height: 100%;
-}
-
-html {
-  touch-action: manipulation;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  overscroll-behavior: none;
 }
 
 body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #1e293b;
+  font-size: 14px;
   background: linear-gradient(
     to bottom,
     #fef3c7 0%,
@@ -53,13 +50,10 @@ body {
     #f8fafc 75%,
     #fef3c7 100%
   );
-  display: flex;
-  flex-direction: column;
-  max-width: 800px; /* missing semicolon fixed */
-  color: #1e293b;
-  font-size: 14px;
-  touch-action: manipulation;
-  margin: 0 auto; /* center content if needed */
+  max-width: 800px;
+  margin: 0 auto;
+  height: 100vh; /* fallback */
+  height: var(--vh, 100vh); /* use real viewport height if set */
 }
 
     .container {
@@ -1217,5 +1211,12 @@ body {
       }
     }
   </script>
+  <script>
+function setViewportHeight() {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`);
+}
+setViewportHeight();
+window.addEventListener('resize', setViewportHeight);
+</script>
 </body>
 </html>
