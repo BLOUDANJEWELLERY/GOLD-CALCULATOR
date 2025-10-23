@@ -168,6 +168,8 @@ body {
       display: none;
       touch-action: manipulation;
       padding: 12px;
+      height: 100vh; /* fallback */
+  height: var(--vh, 100vh); /* use real viewport height if set */
     }
 
     /* Input Cards */
