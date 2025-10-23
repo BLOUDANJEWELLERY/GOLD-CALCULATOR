@@ -29,38 +29,38 @@
       user-select: none;
     }
 
- html, body {
-  overscroll-behavior: none; /* Prevent pull-to-refresh / rubber-band */
+html, body {
+  overscroll-behavior: none;
   margin: 0;
   padding: 0;
   height: 100%;
 }
 
-    html {
-      touch-action: manipulation;
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
+html {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 
-    body {
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      min-height: 100vh;
-      background: linear-gradient(
-  to bottom,
-  #fef3c7 0%,
-  #f8fafc 25%,
-  #fef3c7 50%,
-  #f8fafc 75%,
-  #fef3c7 100%
-);
-display: flex;
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    #fef3c7 0%,
+    #f8fafc 25%,
+    #fef3c7 50%,
+    #f8fafc 75%,
+    #fef3c7 100%
+  );
+  display: flex;
   flex-direction: column;
-max-width: 800px
-       color: #1e293b;
-      margin: 0;
-      font-size: 14px;
-      touch-action: manipulation;
-    }
+  max-width: 800px; /* missing semicolon fixed */
+  color: #1e293b;
+  font-size: 14px;
+  touch-action: manipulation;
+  margin: 0 auto; /* center content if needed */
+}
 
     .container {
       max-width: 700px;
