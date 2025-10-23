@@ -1,59 +1,38 @@
-const CACHE_NAME = 'single-page-cache-v1';
-const OFFLINE_URL = '/offline.html';
-
+const CACHE_NAME = 'bloudan-gold-calculator-v2';
 const FILES_TO_CACHE = [
   './index.html',
   './offline.html',
-  './Icon-512.png',
-  './Icon.png',
-  './icon-192.png',
+  './manifest.json',
   './Icons/Icon.png',
   './Icons/icon-192.png',
-  './Icons/icon-512.png'
+  './Icons/icon-512.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
-// Install – cache main page and offline fallback
+// Install – cache everything
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      for (const url of FILES_TO_CACHE) {
-        try {
-          const response = await fetch(url);
-          if (response.ok) {
-            await cache.put(url, response);
-          }
-        } catch (_) {}
-      }
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
   self.skipWaiting();
 });
 
-// Fetch – try network, fallback to offline page
+// Fetch – cache-first strategy (no network dependency)
 self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(async () => {
-        const cache = await caches.open(CACHE_NAME);
-        return await cache.match(OFFLINE_URL);
-      })
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((response) => response || fetch(event.request))
-    );
-  }
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      if (response) return response;
+      return fetch(event.request).catch(() => caches.match('./offline.html'));
+    })
+  );
 });
 
-// Activate – cleanup old caches if version changes
+// Activate – cleanup old versions
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
-      )
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     )
   );
   self.clients.claim();
