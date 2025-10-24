@@ -1,11 +1,13 @@
-const CACHE_NAME = 'gold-calculator-v4';
+const CACHE_NAME = 'gold-calculator-v5';
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
+  '/',                     // Main page
+  '/index.html',           
   '/manifest.json',
   '/Icons/Icon.png',
   '/Icons/icon-192.png',
   '/Icons/icon-512.png',
+  '/offline.html',         // optional fallback page
+  // Optional: include CDN assets you want offline
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
@@ -18,7 +20,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate – remove old cache versions
+// Activate – remove old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -28,27 +30,30 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch – serve from cache first, fallback to network, fallback to index.html
+// Fetch – offline-first strategy
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Cache hit – return it
-        return cachedResponse;
-      }
-      return fetch(event.request)
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse; // serve cache if available
+
+      return fetch(request)
         .then((networkResponse) => {
-          // Cache the new response for future
-          if (networkResponse && networkResponse.status === 200) {
-            const clonedResponse = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
+          // Cache only same-origin requests (optional)
+          if (networkResponse && networkResponse.status === 200 && request.url.startsWith(self.location.origin)) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
           }
           return networkResponse;
         })
         .catch(() => {
-          // Network failed – fallback to main page
-          return caches.match('/index.html');
-        });
+          // Network failed – serve fallback HTML for navigation requests
+          if (request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+          // Optionally: return a default offline image or CSS if request fails
+        })
     })
   );
 });
