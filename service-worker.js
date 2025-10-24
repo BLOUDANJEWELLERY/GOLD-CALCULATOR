@@ -1,16 +1,19 @@
-const CACHE_NAME = 'gold-calculator-cache-v1';
+const CACHE_NAME = 'gold-calculator-v6';
 const OFFLINE_URL = './offline.html';
 
 const FILES_TO_CACHE = [
   './',
+  './index.html',
   './offline.html',
   './manifest.json',
   './Icons/Icon.png',
   './Icons/icon-192.png',
-  './Icons/icon-512.png'
+  './Icons/icon-512.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
-// Install – cache essential assets
+// Install – pre-cache all core assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
@@ -18,9 +21,9 @@ self.addEventListener('install', (event) => {
       for (const url of FILES_TO_CACHE) {
         try {
           const response = await fetch(url);
-          if (response.ok) await cache.put(url, response);
+          if (response.ok) await cache.put(url, response.clone());
         } catch (err) {
-          // silently fail
+          // ignore failures
         }
       }
     })()
@@ -28,50 +31,48 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Fetch – network-first for pages, cache-first for assets
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-
-  // Offline fallback for navigations
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(async () => {
-        const cache = await caches.open(CACHE_NAME);
-        return await cache.match(OFFLINE_URL);
-      })
-    );
-    return;
-  }
-
-  // Cache-first for static assets
-  if (
-    request.url.startsWith(self.location.origin) &&
-    (request.url.endsWith('.png') ||
-      request.url.endsWith('.jpg') ||
-      request.url.endsWith('.jpeg') ||
-      request.url.endsWith('.svg') ||
-      request.url.endsWith('.css') ||
-      request.url.endsWith('.js'))
-  ) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        return fetch(request).then((response) => {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-          return response;
-        }).catch(() => undefined);
-      })
-    );
-  }
-});
-
-// Activate – delete old caches
+// Activate – clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name)))
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     )
   );
   self.clients.claim();
+});
+
+// Fetch – network first, fallback to cached index + fonts, else offline
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+
+  event.respondWith(
+    (async () => {
+      try {
+        // Try network first
+        const networkResponse = await fetch(request);
+        // Cache same-origin requests
+        if (networkResponse && networkResponse.status === 200 && request.url.startsWith(self.location.origin)) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (err) {
+        // Network failed
+        const cache = await caches.open(CACHE_NAME);
+
+        // Check if index.html + fonts are cached
+        const indexCached = await cache.match('./index.html');
+        const fontAwesomeCached = await cache.match('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+        const googleFontCached = await cache.match('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        if (indexCached && fontAwesomeCached && googleFontCached) {
+          return indexCached; // Serve cached index.html if all fonts are available
+        }
+
+        // Fallback to offline page
+        const offlineFallback = await cache.match(OFFLINE_URL);
+        return offlineFallback;
+      }
+    })()
+  );
 });
