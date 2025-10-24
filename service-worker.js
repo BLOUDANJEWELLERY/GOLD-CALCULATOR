@@ -1,26 +1,41 @@
-const CACHE_NAME = 'gold-calculator-v5';
+]const CACHE_NAME = 'gold-calculator-offline-v1';
 const FILES_TO_CACHE = [
-  '/',                     // Main page
-  '/index.html',           
+  '/', 
+  '/index.html', 
+  '/offline.html', 
   '/manifest.json',
-  '/Icons/Icon.png',
-  '/Icons/icon-192.png',
-  '/Icons/icon-512.png',
-  '/offline.html',         // optional fallback page
-  // Optional: include CDN assets you want offline
+  '/Icons/Icon.png', 
+  '/Icons/icon-192.png', 
+  '/Icons/icon-512.png'
+];
+
+// Optional: URLs for external assets you want offline
+const EXTERNAL_FILES = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
-// Install – pre-cache all core assets
+// Install – pre-cache everything
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(FILES_TO_CACHE);
+      // Optional: fetch external assets and cache them
+      for (const url of EXTERNAL_FILES) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) await cache.put(url, response.clone());
+        } catch (err) {
+          console.warn('[SW] External asset failed to cache:', url);
+        }
+      }
+    })()
   );
   self.skipWaiting();
 });
 
-// Activate – remove old caches
+// Activate – clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -30,17 +45,16 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch – offline-first strategy
+// Fetch – offline-first with fallback
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-
+  
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse; // serve cache if available
+      if (cachedResponse) return cachedResponse;
 
       return fetch(request)
         .then((networkResponse) => {
-          // Cache only same-origin requests (optional)
           if (networkResponse && networkResponse.status === 200 && request.url.startsWith(self.location.origin)) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
@@ -48,11 +62,13 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // Network failed – serve fallback HTML for navigation requests
+          // Fallbacks
           if (request.mode === 'navigate') {
-            return caches.match('/index.html');
+            return caches.match('/offline.html'); // show offline page for HTML
           }
-          // Optionally: return a default offline image or CSS if request fails
+          if (request.destination === 'image') {
+            return '/Icons/Icon.png'; // optional default image
+          }
         })
     })
   );
