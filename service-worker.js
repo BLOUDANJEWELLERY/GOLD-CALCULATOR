@@ -1,33 +1,26 @@
-]const CACHE_NAME = 'gold-calculator-offline-v1';
+const CACHE_NAME = 'gold-calculator-cache-v1';
+const OFFLINE_URL = './offline.html';
+
 const FILES_TO_CACHE = [
-  '/', 
-  '/index.html', 
-  '/offline.html', 
-  '/manifest.json',
-  '/Icons/Icon.png', 
-  '/Icons/icon-192.png', 
-  '/Icons/icon-512.png'
+  './',
+  './offline.html',
+  './manifest.json',
+  './Icons/Icon.png',
+  './Icons/icon-192.png',
+  './Icons/icon-512.png'
 ];
 
-// Optional: URLs for external assets you want offline
-const EXTERNAL_FILES = [
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
-];
-
-// Install – pre-cache everything
+// Install – cache essential assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(FILES_TO_CACHE);
-      // Optional: fetch external assets and cache them
-      for (const url of EXTERNAL_FILES) {
+      for (const url of FILES_TO_CACHE) {
         try {
           const response = await fetch(url);
-          if (response.ok) await cache.put(url, response.clone());
+          if (response.ok) await cache.put(url, response);
         } catch (err) {
-          console.warn('[SW] External asset failed to cache:', url);
+          // silently fail
         }
       }
     })()
@@ -35,41 +28,50 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate – clean old caches
+// Fetch – network-first for pages, cache-first for assets
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+
+  // Offline fallback for navigations
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(async () => {
+        const cache = await caches.open(CACHE_NAME);
+        return await cache.match(OFFLINE_URL);
+      })
+    );
+    return;
+  }
+
+  // Cache-first for static assets
+  if (
+    request.url.startsWith(self.location.origin) &&
+    (request.url.endsWith('.png') ||
+      request.url.endsWith('.jpg') ||
+      request.url.endsWith('.jpeg') ||
+      request.url.endsWith('.svg') ||
+      request.url.endsWith('.css') ||
+      request.url.endsWith('.js'))
+  ) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          return response;
+        }).catch(() => undefined);
+      })
+    );
+  }
+});
+
+// Activate – delete old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    caches.keys().then((cacheNames) =>
+      Promise.all(cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name)))
     )
   );
   self.clients.claim();
-});
-
-// Fetch – offline-first with fallback
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  
-  event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
-
-      return fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200 && request.url.startsWith(self.location.origin)) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // Fallbacks
-          if (request.mode === 'navigate') {
-            return caches.match('/offline.html'); // show offline page for HTML
-          }
-          if (request.destination === 'image') {
-            return '/Icons/Icon.png'; // optional default image
-          }
-        })
-    })
-  );
 });
