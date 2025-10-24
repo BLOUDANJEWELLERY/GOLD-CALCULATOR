@@ -1,11 +1,11 @@
 const CACHE_NAME = 'gold-calculator-v4';
 const FILES_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './Icons/Icon.png',
-  './Icons/icon-192.png',
-  './Icons/icon-512.png',
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/Icons/Icon.png',
+  '/Icons/icon-192.png',
+  '/Icons/icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
@@ -18,28 +18,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Fetch – network first, fallback to cache
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        // If we got a valid response, update the cache
-        if (networkResponse && networkResponse.status === 200) {
-          const clonedResponse = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
-        }
-        return networkResponse;
-      })
-      .catch(() => {
-        // Network failed, use cache
-        return caches.match(event.request).then((cachedResponse) => {
-          // If cached, return it; otherwise, return the main page as fallback
-          return cachedResponse || caches.match('./index.html');
-        });
-      })
-  );
-});
-
 // Activate – remove old cache versions
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -48,4 +26,29 @@ self.addEventListener('activate', (event) => {
     )
   );
   self.clients.claim();
+});
+
+// Fetch – serve from cache first, fallback to network, fallback to index.html
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Cache hit – return it
+        return cachedResponse;
+      }
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // Cache the new response for future
+          if (networkResponse && networkResponse.status === 200) {
+            const clonedResponse = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // Network failed – fallback to main page
+          return caches.match('/index.html');
+        });
+    })
+  );
 });
