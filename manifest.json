@@ -2,12 +2,8 @@
   "name": "Gold Calculator",
   "short_name": "Gold Calculator",
   "description": "A web app to do complex gold calculations.",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
-  "display_override": ["fullscreen", "standalone"],
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
   "background_color": "#011d57",
   "theme_color": "#011d57",
   "orientation": "portrait",
