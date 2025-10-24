@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gold-calculator-v3';
+const CACHE_NAME = 'gold-calculator-v4';
 const FILES_TO_CACHE = [
   './',
   './index.html',
@@ -10,25 +10,37 @@ const FILES_TO_CACHE = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
-// Install – cache all essential files
+// Install – pre-cache all core assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(FILES_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
   self.skipWaiting();
 });
 
-// Fetch – always serve from cache first, never fail offline
+// Fetch – network first, fallback to cache
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => response || fetch(event.request))
-      .catch(() => caches.match('./index.html'))
+    fetch(event.request)
+      .then((networkResponse) => {
+        // If we got a valid response, update the cache
+        if (networkResponse && networkResponse.status === 200) {
+          const clonedResponse = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // Network failed, use cache
+        return caches.match(event.request).then((cachedResponse) => {
+          // If cached, return it; otherwise, return the main page as fallback
+          return cachedResponse || caches.match('./index.html');
+        });
+      })
   );
 });
 
-// Activate – remove old caches when version changes
+// Activate – remove old cache versions
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
