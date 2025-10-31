@@ -1,38 +1,26 @@
-const CACHE_NAME = 'gold-calculator-v6';
-const OFFLINE_URL = './offline.html';
-
+const CACHE_NAME = "gold-calculator-v7";
 const FILES_TO_CACHE = [
-  './',
-  './index.html',
-  './offline.html',
-  './manifest.json',
-  './Icons/Icon.png',
-  './Icons/icon-192.png',
-  './Icons/icon-512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./offline.html",
+  "./Icons/Icon.png",
+  "./Icons/icon-192.png",
+  "./Icons/icon-512.png",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css",
+  "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
 ];
 
-// Install – pre-cache all core assets
-self.addEventListener('install', (event) => {
+// Install immediately and cache core files
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      for (const url of FILES_TO_CACHE) {
-        try {
-          const response = await fetch(url);
-          if (response.ok) await cache.put(url, response.clone());
-        } catch (err) {
-          // ignore failures
-        }
-      }
-    })()
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
-  self.skipWaiting();
+  self.skipWaiting(); // Activate instantly
 });
 
-// Activate – clean old caches
-self.addEventListener('activate', (event) => {
+// Activate immediately and remove old caches
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
@@ -41,38 +29,28 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch – network first, fallback to cached index + fonts, else offline
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-
+// Fetch: cache-first strategy for instant offline readiness
+self.addEventListener("fetch", (event) => {
   event.respondWith(
-    (async () => {
-      try {
-        // Try network first
-        const networkResponse = await fetch(request);
-        // Cache same-origin requests
-        if (networkResponse && networkResponse.status === 200 && request.url.startsWith(self.location.origin)) {
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-      } catch (err) {
-        // Network failed
-        const cache = await caches.open(CACHE_NAME);
-
-        // Check if index.html + fonts are cached
-        const indexCached = await cache.match('./index.html');
-        const fontAwesomeCached = await cache.match('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
-        const googleFontCached = await cache.match('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-        if (indexCached && fontAwesomeCached && googleFontCached) {
-          return indexCached; // Serve cached index.html if all fonts are available
-        }
-
-        // Fallback to offline page
-        const offlineFallback = await cache.match(OFFLINE_URL);
-        return offlineFallback;
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Return from cache immediately
+        return cachedResponse;
       }
-    })()
+      // Else fetch from network and cache it
+      return fetch(event.request)
+        .then((response) => {
+          if (
+            response &&
+            response.status === 200 &&
+            response.type === "basic"
+          ) {
+            const respClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone));
+          }
+          return response;
+        })
+        .catch(() => caches.match("./offline.html"));
+    })
   );
 });
