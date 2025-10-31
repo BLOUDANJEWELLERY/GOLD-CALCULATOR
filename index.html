@@ -7,9 +7,15 @@
   <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#011d57" />
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
-  }
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./service-worker-v7.js")
+      .then(() => console.log("SW registered"))
+      .catch((err) => console.error("SW registration failed:", err));
+  });
+}
+
 </script>
   <link rel="apple-touch-icon" href="Icons/Icon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
