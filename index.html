@@ -1190,52 +1190,27 @@ body::before {
 async function takeScreenshotPage() {
   document.body.classList.add('no-animations');
   
-  // Temporarily simplify the background for better capture
-  const originalBackground = document.body.style.background;
-  document.body.style.background = 'linear-gradient(to bottom, #fef3c7, #f8fafc)';
+  // Simple approach - capture entire page as-is
+  const canvas = await html2canvas(document.documentElement, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    scrollX: 0,
+    scrollY: 0
+  });
   
-  // Use a more specific capture area that excludes potential issues
-  const captureElement = document.querySelector('.container') || document.body;
+  canvas.toBlob(blob => {
+    const file = new File([blob], "calculator_screenshot.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: "Calculator Screenshot" });
+    } else {
+      const link = document.createElement('a');
+      link.download = 'calculator_screenshot.png';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    }
+  }, 'image/png');
   
-  try {
-    const canvas = await html2canvas(captureElement, { 
-      backgroundColor: '#ffffff',
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: document.documentElement.scrollWidth,
-      windowHeight: document.documentElement.scrollHeight,
-      onclone: function(clonedDoc) {
-        // Fix any styles in the cloned document
-        const clonedBody = clonedDoc.body;
-        clonedBody.style.overscrollBehavior = 'auto';
-        clonedBody.style.height = 'auto';
-        clonedBody.style.background = 'linear-gradient(to bottom, #fef3c7, #f8fafc)';
-      }
-    });
-    
-    canvas.toBlob(blob => {
-      const file = new File([blob], "calculator_screenshot.png", { type: "image/png" });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: "Calculator Screenshot" });
-      } else {
-        const link = document.createElement('a');
-        link.download = 'calculator_screenshot.png';
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        URL.revokeObjectURL(link.href);
-      }
-    }, 'image/png');
-  } catch (error) {
-    console.error('Screenshot failed:', error);
-    alert('Failed to capture screenshot. Please try again.');
-  } finally {
-    // Restore original styles
-    document.body.style.background = originalBackground;
-    document.body.classList.remove('no-animations');
-  }
+  document.body.classList.remove('no-animations');
 }
 
     async function takeScreenshotTable() {
