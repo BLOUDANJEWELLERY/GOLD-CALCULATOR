@@ -1190,27 +1190,48 @@ body::before {
 async function takeScreenshotPage() {
   document.body.classList.add('no-animations');
   
-  // Simple approach - capture entire page as-is
-  const canvas = await html2canvas(document.documentElement, {
-    backgroundColor: '#ffffff',
-    scale: 2,
-    scrollX: 0,
-    scrollY: 0
-  });
+  // Add temporary spacing if content is too short
+  const originalContainerStyle = document.querySelector('.container').style.minHeight;
+  const isContentShort = document.body.scrollHeight < window.innerHeight * 0.8;
   
-  canvas.toBlob(blob => {
-    const file = new File([blob], "calculator_screenshot.png", { type: "image/png" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file], title: "Calculator Screenshot" });
-    } else {
-      const link = document.createElement('a');
-      link.download = 'calculator_screenshot.png';
-      link.href = URL.createObjectURL(blob);
-      link.click();
-    }
-  }, 'image/png');
+  if (isContentShort) {
+    document.querySelector('.container').style.minHeight = '70vh';
+    // Force reflow
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
   
-  document.body.classList.remove('no-animations');
+  try {
+    const canvas = await html2canvas(document.body, { 
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight
+    });
+    
+    canvas.toBlob(blob => {
+      const file = new File([blob], "calculator_screenshot.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: "Calculator Screenshot" });
+      } else {
+        const link = document.createElement('a');
+        link.download = 'calculator_screenshot.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 100);
+      }
+    }, 'image/png');
+  } catch (error) {
+    console.error('Screenshot failed:', error);
+    alert('Failed to capture screenshot. Please try again.');
+  } finally {
+    // Restore original styles
+    document.querySelector('.container').style.minHeight = originalContainerStyle;
+    document.body.classList.remove('no-animations');
+  }
 }
 
     async function takeScreenshotTable() {
